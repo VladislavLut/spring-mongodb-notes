@@ -15,7 +15,7 @@ class NoteService @Autowired constructor(
 ) {
 
     fun save(note: Note) {
-        if (userRepository.existsById(note.userId)) throw BadRequestException("User with such id does not exist.")
+        if (!userRepository.existsById(note.userId)) throw BadRequestException("User with such id does not exist.")
         noteRepository.save(note)
     }
 
