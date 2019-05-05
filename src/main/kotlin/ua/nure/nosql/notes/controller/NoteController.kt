@@ -7,10 +7,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import ua.nure.nosql.notes.entity.Note
 import ua.nure.nosql.notes.service.NoteService
+import ua.nure.nosql.notes.service.UserService
+import java.security.Principal
 
 @RestController
 @RequestMapping("/notes/")
-class NoteController @Autowired constructor(private val noteService: NoteService) {
+class NoteController @Autowired constructor(private val noteService: NoteService, private val userService: UserService) {
 
     @GetMapping
     fun getAllNotes() = noteService.getAll()
@@ -22,8 +24,9 @@ class NoteController @Autowired constructor(private val noteService: NoteService
     fun getUserNotes(@PathVariable(PARAM_USER_ID) userId: ObjectId) = noteService.getByUserId(userId)
 
     @PostMapping
-    fun createNote(@RequestBody note: Note): ResponseEntity<Unit> {
-        //TODO: get user id from auth header and put his id into the note model
+    fun createNote(@RequestBody note: Note, principal: Principal): ResponseEntity<Unit> {
+        val userId = userService.getByUserName(principal.name).id
+        note.userId = userId
         noteService.save(note)
         return ResponseEntity(HttpStatus.CREATED)
     }
