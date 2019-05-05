@@ -11,6 +11,8 @@ import ua.nure.nosql.notes.repository.UserRepository
 @Service
 class UserService @Autowired constructor(private val userRepository: UserRepository) {
 
+    private val passwordEncoder = BCryptPasswordEncoder()
+
     fun save(user: User) = userRepository.run {
         if (existsUserByUserName(user.userName)) throw RuntimeException("User with same user name already exist.")
         user.password = passwordEncoder.encode(user.password)
