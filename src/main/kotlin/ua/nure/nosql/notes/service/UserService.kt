@@ -2,6 +2,7 @@ package ua.nure.nosql.notes.service
 
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import ua.nure.nosql.notes.entity.User
 import ua.nure.nosql.notes.exception.BadRequestException
@@ -12,7 +13,7 @@ class UserService @Autowired constructor(private val userRepository: UserReposit
 
     fun save(user: User) = userRepository.run {
         if (existsUserByUserName(user.userName)) throw RuntimeException("User with same user name already exist.")
-        user.id = ObjectId.get()
+        user.password = passwordEncoder.encode(user.password)
         save(user)
     }
 
